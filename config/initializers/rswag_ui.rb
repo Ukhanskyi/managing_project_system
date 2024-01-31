@@ -8,7 +8,7 @@ Rswag::Ui.configure do |c|
   # correspond to the relative paths for those endpoints.
 
   # c.swagger_endpoint '/api-docs/v1/swagger.yaml', 'Codica managing project system API V1 Docs'
-  c.openapi_endpoint 'api-docs.json', 'API V1 Docs'
+  c.openapi_endpoint '/api-docs/v1/swagger.yaml', 'API V1 Docs'
 
   # Add Basic Auth in case your API is private
   # c.basic_auth_enabled = true
