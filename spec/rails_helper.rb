@@ -9,6 +9,7 @@ require_relative 'support/shoulda_matchers'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'simplecov'
+require 'support/auth_helper'
 require 'devise/jwt/test_helpers'
 
 SimpleCov.start do
@@ -48,6 +49,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
+  config.include AuthHelper
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = Rails.root.join('spec/fixtures')
 
