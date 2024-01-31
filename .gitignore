@@ -34,3 +34,5 @@
 # Ignore all .DS_Store
 .DS_Store
 .env
+
+/coverage/

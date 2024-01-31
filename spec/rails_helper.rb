@@ -9,6 +9,7 @@ require_relative 'support/shoulda_matchers'
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 require 'simplecov'
+require 'devise/jwt/test_helpers'
 
 SimpleCov.start do
   add_filter '/vendor/'
