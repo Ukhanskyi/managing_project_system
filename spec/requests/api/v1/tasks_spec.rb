@@ -42,7 +42,7 @@ RSpec.describe 'Api::V1::TasksController', type: :request do # rubocop:disable M
               name: { type: :string },
               description: { type: :string },
               status: {
-                type: :integer,
+                type: :string,
                 enum: %w[to_do in_progress completed]
               },
               project_id: { type: :integer }

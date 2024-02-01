@@ -49,12 +49,9 @@ paths:
                       type: string
                     description:
                       type: string
-                    user_id:
-                      type: integer
                   required:
                   - name
                   - description
-                  - user_id
               required:
               - project
   "/api/v1/projects/{id}":
@@ -86,6 +83,8 @@ paths:
       responses:
         '200':
           description: successful
+        '401':
+          description: unauthorized
         '422':
           description: unprocessable entity
       requestBody:
@@ -119,6 +118,8 @@ paths:
       responses:
         '200':
           description: successful
+        '401':
+          description: unauthorized
         '422':
           description: unprocessable entity
       requestBody:
@@ -151,6 +152,8 @@ paths:
       responses:
         '204':
           description: successful
+        '401':
+          description: unauthorized
         '404':
           description: not found
   "/api/v1/tasks":
@@ -189,7 +192,7 @@ paths:
                     description:
                       type: string
                     status:
-                      type: integer
+                      type: string
                       enum:
                       - to_do
                       - in_progress

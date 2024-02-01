@@ -4,6 +4,7 @@ module Api
     class ProjectsController < ApplicationController
       before_action :authenticate_user!
       before_action :set_project, only: [:show, :update, :destroy]
+      before_action :authorize_user!, only: [:update, :destroy]
 
       # GET /projects
       def index
@@ -18,7 +19,7 @@ module Api
 
       # POST /projects
       def create
-        @project = Project.new(project_params)
+        @project = current_user.projects.new(project_params)
 
         if @project.save
           render json: @project, status: :created, location: api_v1_project_url(@project)
@@ -50,6 +51,12 @@ module Api
 
       def project_params
         params.require(:project).permit(:name, :description, :user_id)
+      end
+
+      def authorize_user!
+        unless @project.user_id == current_user.id
+          render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
+        end
       end
     end
   end

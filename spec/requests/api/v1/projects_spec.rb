@@ -39,17 +39,16 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
             type: :object,
             properties: {
               name: { type: :string },
-              description: { type: :string },
-              user_id: { type: :integer }
+              description: { type: :string }
             },
-            required: %w[name description user_id]
+            required: %w[name description]
           }
         },
         required: [:project]
       }
 
       response(201, 'project created') do
-        let(:new_project) { FactoryBot.attributes_for(:project, name: 'New project', description: 'Lorem Ipsum body for project', user_id: user.id) }
+        let(:new_project) { FactoryBot.attributes_for(:project, name: 'New project', description: 'Lorem Ipsum body for project') }
 
         it 'creates a new project with valid attributes' do
           data = response.parsed_body
@@ -61,7 +60,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
       end
 
       response(422, 'unprocessable entity') do
-        let(:new_project) { FactoryBot.attributes_for(:project, name: nil, description: 'Lorem Ipsum body for project', user_id: nil) }
+        let(:new_project) { FactoryBot.attributes_for(:project, name: nil, description: 'Lorem Ipsum body for project') }
 
         it 'doesn`t create a new project with invalid attributes' do
           expect(response).to have_http_status(:unprocessable_entity)
@@ -126,7 +125,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
       }
 
       response(200, 'successful') do
-        let(:project)      { FactoryBot.create(:project) }
+        let(:project)      { FactoryBot.create(:project, user_id: user.id) }
         let(:id)           { project.id }
         let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project') }
 
@@ -140,8 +139,20 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
         run_test!
       end
 
+      response(401, 'unauthorized') do
+        let(:author)  { FactoryBot.create(:user) }
+        let(:project) { FactoryBot.create(:project, user_id: author.id) }
+        let(:id)      { project.id }
+        let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project', description: 'Updated projects description', user_id: user.id) }
+
+        it 'doesn`t update project with PATCH becouse you aren`t author' do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        run_test!
+      end
+
       response('422', 'unprocessable entity') do
-        let(:project)      { FactoryBot.create(:project) }
+        let(:project)      { FactoryBot.create(:project, user_id: user.id) }
         let(:id)           { project.id }
         let(:project_data) { FactoryBot.attributes_for(:project, user_id: nil) }
 
@@ -176,7 +187,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
       }
 
       response(200, 'successful') do
-        let(:project)      { FactoryBot.create(:project) }
+        let(:project)      { FactoryBot.create(:project, user_id: user.id) }
         let(:id)           { project.id }
         let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project', description: 'Updated projects description', user_id: user.id) }
 
@@ -189,8 +200,20 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
         run_test!
       end
 
-      response '422', 'unprocessable entity' do
-        let(:project)      { FactoryBot.create(:project) }
+      response(401, 'unauthorized') do
+        let(:author)  { FactoryBot.create(:user) }
+        let(:project) { FactoryBot.create(:project, user_id: author.id) }
+        let(:id)      { project.id }
+        let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project', description: 'Updated projects description', user_id: user.id) }
+
+        it 'doesn`t update project with PATCH becouse you aren`t author' do
+          expect(response).to have_http_status(:unauthorized)
+        end
+        run_test!
+      end
+
+      response('422', 'unprocessable entity') do
+        let(:project)      { FactoryBot.create(:project, user_id: user.id) }
         let(:id)           { project.id }
         let(:project_data) { FactoryBot.attributes_for(:project, name: nil, description: 'Updated projects description', user_id: nil) }
 
@@ -206,11 +229,21 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disabl
       security [jwt: []]
 
       response(204, 'successful') do
-        let(:project) { FactoryBot.create(:project) }
+        let(:project) { FactoryBot.create(:project, user_id: user.id) }
         let(:id)      { project.id }
 
         run_test! do |response|
           expect(response.body).to be_empty
+        end
+      end
+
+      response(401, 'unauthorized') do
+        let(:author)  { FactoryBot.create(:user) }
+        let(:project) { FactoryBot.create(:project, user_id: author.id) }
+        let(:id)      { project.id }
+
+        run_test! do |response|
+          expect(response).to have_http_status(:unauthorized)
         end
       end
 
