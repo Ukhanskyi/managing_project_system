@@ -4,4 +4,7 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable, :validatable,
          :jwt_authenticatable, jwt_revocation_strategy: self
+
+  has_many :projects, dependent: :destroy
+  has_many :tasks, through: :projects
 end

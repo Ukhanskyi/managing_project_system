@@ -1,4 +1,3 @@
-# spec/serializers/user_serializer_spec.rb
 require 'rails_helper'
 
 RSpec.describe UserSerializer do
