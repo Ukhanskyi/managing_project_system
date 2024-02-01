@@ -163,6 +163,13 @@ paths:
       - Tasks
       security:
       - jwt: []
+      parameters:
+      - name: by_status
+        in: query
+        required: false
+        description: Filter tasks by status (to_do, in_progress, completed)
+        schema:
+          type: string
       responses:
         '200':
           description: successful

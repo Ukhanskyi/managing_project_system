@@ -8,8 +8,8 @@ module Api
 
       # GET /projects
       def index
-        @projects = Project.all
-        render json: @projects
+        @projects = Project.includes(:tasks).all
+        render json: @projects.to_json(include: :tasks)
       end
 
       # GET /projects/1
@@ -45,8 +45,7 @@ module Api
       private
 
       def set_project
-        @project = Project.find_by(id: params[:id])
-        render json: { error: 'Project not found' }, status: :not_found unless @project
+        @project = Project.find(params[:id])
       end
 
       def project_params
@@ -54,9 +53,9 @@ module Api
       end
 
       def authorize_user!
-        unless @project.user_id == current_user.id
-          render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
-        end
+        return if @project.user_id == current_user.id
+
+        render json: { error: 'You are not authorized to perform this action' }, status: :unauthorized
       end
     end
   end

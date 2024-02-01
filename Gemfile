@@ -57,6 +57,7 @@ end
 gem 'devise'
 gem 'devise-jwt'
 gem 'dotenv-rails'
+gem 'has_scope'
 gem 'jsonapi-serializer'
 gem 'parser', '~> 3.2', '>= 3.2.2'
 gem 'rubocop-rails', require: false

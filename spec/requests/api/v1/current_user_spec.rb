@@ -3,7 +3,7 @@ require 'swagger_helper'
 TAGS_CURRENT_USERS = 'Current User'.freeze
 
 RSpec.describe 'Api::V1::CurrentUsersController', type: :request do
-  let(:user) { FactoryBot.create(:user) }
+  let(:user)          { FactoryBot.create(:user) }
   let(:Authorization) { auth_token(user) }
 
   path '/api/v1/current_users' do

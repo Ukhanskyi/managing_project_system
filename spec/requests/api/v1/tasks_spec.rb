@@ -8,9 +8,14 @@ RSpec.describe 'Api::V1::TasksController', type: :request do # rubocop:disable M
   let(:project)       { FactoryBot.create(:project) }
 
   path '/api/v1/tasks' do # rubocop:disable Metrics/BlockLength
-    get('Returns Tasks index page') do
+    get('Returns Tasks index page') do # rubocop:disable Metrics/BlockLength
       tags TAGS_TASKS
       security [jwt: []]
+      parameter name: :by_status,
+                in: :query,
+                type: :string,
+                required: false,
+                description: 'Filter tasks by status (to_do, in_progress, completed)'
 
       response(200, 'successful') do
         let!(:tasks) { FactoryBot.create_list(:task, 3) }
@@ -21,8 +26,23 @@ RSpec.describe 'Api::V1::TasksController', type: :request do # rubocop:disable M
           expect(data.count).to eq(3)
           expect(response).to have_http_status(:success)
         end
-
         run_test!
+      end
+
+      context 'when filtered by status' do
+        response(200, 'successful') do
+          let(:by_status)       { 'in_progress' }
+          let!(:to_do_tasks)    { FactoryBot.create_list(:task, 3, :to_do_status) }
+          let!(:filtered_tasks) { FactoryBot.create_list(:task, 2, :in_progress_status) }
+
+          it 'returns tasks filtered by status' do
+            data = JSON(response.body)
+
+            expect(data.count).to eq(2)
+            expect(response).to have_http_status(:success)
+          end
+          run_test!
+        end
       end
     end
 

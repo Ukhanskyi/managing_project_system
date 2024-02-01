@@ -5,9 +5,11 @@ module Api
       before_action :authenticate_user!
       before_action :set_task, only: [:show, :update, :destroy]
 
+      has_scope :by_status
+
       # GET /tasks
       def index
-        @tasks = Task.all
+        @tasks = apply_scopes(Task).all
         render json: @tasks
       end
 
@@ -44,8 +46,7 @@ module Api
       private
 
       def set_task
-        @task = Task.find_by(id: params[:id])
-        render json: { error: 'Task not found' }, status: :not_found unless @task
+        @task = Task.find(params[:id])
       end
 
       def task_params
