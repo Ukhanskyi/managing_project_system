@@ -1,24 +1,19 @@
-# README
+# Codica Test Task for MANAGING PROJECT SYSTEM
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Usage
 
-Things you may want to cover:
+### Local run Recommendations
 
-* Ruby version
+1. Clone the new repository to your local machine
+`git@github.com:Ukhanskyi/managing_project_system.git` or `https://github.com/Ukhanskyi/managing_project_system.git`
+1. Run `bundle install`
+1. Run `EDITOR="code --wait" rails credentials:edit`
+1. Run `rails db:create db:migrate db:seed`
+1. Run `rails s` to start your api server on port 3000
+1. For testing this API please use [Postman](https://elements.getpostman.com/redirect?entityId=9811729-b97bbb9e-6fb6-45e7-a289-70a3963c2fb3&entityType=collection) or [Swagger](http://localhost:3000/api-docs/index.html) (when your local server is running)
 
-* System dependencies
+### Docker run Recommendations
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+1. Run `docker-compose build`
+1. Run `docker-compose run web rails db:migrate db:seed`
+1. Run `docker-compose up`
