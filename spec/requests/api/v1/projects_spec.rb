@@ -2,36 +2,36 @@ require 'swagger_helper'
 
 TAGS_PROJECTS = 'Projects'.freeze
 
-RSpec.describe 'Api::V1::ProjectsController', type: :request do
+RSpec.describe 'Api::V1::ProjectsController', type: :request do # rubocop:disable Metrics/BlockLength
   let(:user) { FactoryBot.create(:user) }
   let(:Authorization) { auth_token(user) }
 
-  path '/api/v1/projects' do
+  path '/api/v1/projects' do # rubocop:disable Metrics/BlockLength
     get('Returns Projects index page') do
       tags TAGS_PROJECTS
       security [jwt: []]
-    
+
       response(200, 'successful') do
         let!(:projects) { FactoryBot.create_list(:project, 3) }
-    
+
         it 'returns projects' do
           data = JSON(response.body)
-    
+
           expect(data.count).to eq(3)
           expect(response).to have_http_status(:success)
         end
-    
+
         run_test!
       end
     end
 
-    post('Creates a new project') do
+    post('Creates a new project') do # rubocop:disable Metrics/BlockLength
       tags TAGS_PROJECTS
       security [jwt: []]
-    
+
       consumes 'application/json'
       produces 'application/json'
-    
+
       parameter name: :new_project, in: :body, schema: {
         type: :object,
         properties: {
@@ -47,12 +47,12 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
         },
         required: [:project]
       }
-    
+
       response(201, 'project created') do
         let(:new_project) { FactoryBot.attributes_for(:project, name: 'New project', description: 'Lorem Ipsum body for project', user_id: user.id) }
 
         it 'creates a new project with valid attributes' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['name']).to eq('New project')
           expect(response).to have_http_status(:created)
@@ -83,7 +83,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
         let(:id)      { project.id }
 
         it 'renders a successful show page response' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['id']).to eq(id)
           expect(response).to have_http_status(:success)
@@ -105,10 +105,10 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
     patch('Update existing project partially') do # rubocop:disable Metrics/BlockLength
       tags TAGS_PROJECTS
       security [jwt: []]
-  
+
       consumes 'application/json'
       produces 'application/json'
-  
+
       parameter name: :project_data, in: :body, schema: {
         type: :object,
         properties: {
@@ -124,19 +124,19 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
         },
         required: [:project]
       }
-  
+
       response(200, 'successful') do
         let(:project)      { FactoryBot.create(:project) }
         let(:id)           { project.id }
         let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project') }
-      
+
         it 'updates project with PATCH and valid attributes' do
-          data = JSON.parse(response.body)
-      
+          data = response.parsed_body
+
           expect(data['name']).to eq('Updated project')
           expect(response).to have_http_status(:success)
         end
-      
+
         run_test!
       end
 
@@ -155,7 +155,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
     put('Update an existing project or create new if project doesn`t exist') do # rubocop:disable Metrics/BlockLength
       tags TAGS_PROJECTS
       security [jwt: []]
-  
+
       consumes 'application/json'
       produces 'application/json'
 
@@ -181,7 +181,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
         let(:project_data) { FactoryBot.attributes_for(:project, name: 'Updated project', description: 'Updated projects description', user_id: user.id) }
 
         it 'updates project with PATCH and valid attributes' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['name']).to eq('Updated project')
           expect(response).to have_http_status(:success)
@@ -204,7 +204,7 @@ RSpec.describe 'Api::V1::ProjectsController', type: :request do
     delete('Delete a project') do
       tags TAGS_PROJECTS
       security [jwt: []]
-  
+
       response(204, 'successful') do
         let(:project) { FactoryBot.create(:project) }
         let(:id)      { project.id }

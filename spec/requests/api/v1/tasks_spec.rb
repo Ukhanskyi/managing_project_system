@@ -2,37 +2,37 @@ require 'swagger_helper'
 
 TAGS_TASKS = 'Tasks'.freeze
 
-RSpec.describe "Api::V1::TasksController", type: :request do
+RSpec.describe 'Api::V1::TasksController', type: :request do # rubocop:disable Metrics/BlockLength
   let(:user)          { FactoryBot.create(:user) }
   let(:Authorization) { auth_token(user) }
   let(:project)       { FactoryBot.create(:project) }
 
-  path '/api/v1/tasks' do
+  path '/api/v1/tasks' do # rubocop:disable Metrics/BlockLength
     get('Returns Tasks index page') do
       tags TAGS_TASKS
       security [jwt: []]
-    
+
       response(200, 'successful') do
         let!(:tasks) { FactoryBot.create_list(:task, 3) }
-    
+
         it 'returns tasks' do
           data = JSON(response.body)
-    
+
           expect(data.count).to eq(3)
           expect(response).to have_http_status(:success)
         end
-    
+
         run_test!
       end
     end
 
-    post('Creates a new task') do
+    post('Creates a new task') do # rubocop:disable Metrics/BlockLength
       tags TAGS_TASKS
       security [jwt: []]
-    
+
       consumes 'application/json'
       produces 'application/json'
-    
+
       parameter name: :new_task, in: :body, schema: {
         type: :object,
         properties: {
@@ -41,9 +41,9 @@ RSpec.describe "Api::V1::TasksController", type: :request do
             properties: {
               name: { type: :string },
               description: { type: :string },
-              status: { 
+              status: {
                 type: :integer,
-                enum: ['to_do', 'in_progress', 'completed']
+                enum: %w[to_do in_progress completed]
               },
               project_id: { type: :integer }
             },
@@ -52,12 +52,12 @@ RSpec.describe "Api::V1::TasksController", type: :request do
         },
         required: [:task]
       }
-    
+
       response(201, 'task created') do
         let(:new_task) { FactoryBot.attributes_for(:task, :to_do_status, name: 'New task', description: 'Lorem Ipsum body for task', project_id: project.id) }
 
         it 'creates a new task with valid attributes' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['name']).to eq('New task')
           expect(response).to have_http_status(:created)
@@ -88,7 +88,7 @@ RSpec.describe "Api::V1::TasksController", type: :request do
         let(:id)   { task.id }
 
         it 'renders a successful show page response' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['id']).to eq(id)
           expect(response).to have_http_status(:success)
@@ -110,10 +110,10 @@ RSpec.describe "Api::V1::TasksController", type: :request do
     patch('Update existing task partially') do # rubocop:disable Metrics/BlockLength
       tags TAGS_TASKS
       security [jwt: []]
-  
+
       consumes 'application/json'
       produces 'application/json'
-  
+
       parameter name: :task_data, in: :body, schema: {
         type: :object,
         properties: {
@@ -122,9 +122,9 @@ RSpec.describe "Api::V1::TasksController", type: :request do
             properties: {
               name: { type: :string },
               description: { type: :string },
-              status: { 
+              status: {
                 type: :integer,
-                enum: ['to_do', 'in_progress', 'completed']
+                enum: %w[to_do in_progress completed]
               },
               project_id: { type: :integer }
             },
@@ -133,19 +133,19 @@ RSpec.describe "Api::V1::TasksController", type: :request do
         },
         required: [:task]
       }
-  
+
       response(200, 'successful') do
         let(:task)      { FactoryBot.create(:task) }
         let(:id)        { task.id }
         let(:task_data) { FactoryBot.attributes_for(:task, name: 'Updated task') }
-      
+
         it 'updates task with PATCH and valid attributes' do
-          data = JSON.parse(response.body)
-      
+          data = response.parsed_body
+
           expect(data['name']).to eq('Updated task')
           expect(response).to have_http_status(:success)
         end
-      
+
         run_test!
       end
 
@@ -164,7 +164,7 @@ RSpec.describe "Api::V1::TasksController", type: :request do
     put('Update an existing task or create new if task doesn`t exist') do # rubocop:disable Metrics/BlockLength
       tags TAGS_TASKS
       security [jwt: []]
-  
+
       consumes 'application/json'
       produces 'application/json'
 
@@ -176,9 +176,9 @@ RSpec.describe "Api::V1::TasksController", type: :request do
             properties: {
               name: { type: :string },
               description: { type: :string },
-              status: { 
+              status: {
                 type: :integer,
-                enum: ['to_do', 'in_progress', 'completed']
+                enum: %w[to_do in_progress completed]
               },
               project_id: { type: :integer }
             },
@@ -194,7 +194,7 @@ RSpec.describe "Api::V1::TasksController", type: :request do
         let(:task_data) { FactoryBot.attributes_for(:task, name: 'Updated task', description: 'Updated task description', project_id: project.id) }
 
         it 'updates task with PATCH and valid attributes' do
-          data = JSON.parse(response.body)
+          data = response.parsed_body
 
           expect(data['name']).to eq('Updated task')
           expect(response).to have_http_status(:success)
@@ -217,10 +217,10 @@ RSpec.describe "Api::V1::TasksController", type: :request do
     delete('Delete a task') do
       tags TAGS_TASKS
       security [jwt: []]
-  
+
       response(204, 'successful') do
         let(:task) { FactoryBot.create(:task) }
-        let(:id)      { task.id }
+        let(:id) { task.id }
 
         run_test! do |response|
           expect(response.body).to be_empty

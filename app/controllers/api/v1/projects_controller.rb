@@ -1,5 +1,6 @@
 module Api
   module V1
+    # Projects Controller
     class ProjectsController < ApplicationController
       before_action :authenticate_user!
       before_action :set_project, only: [:show, :update, :destroy]
