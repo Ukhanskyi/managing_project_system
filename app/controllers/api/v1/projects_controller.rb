@@ -45,7 +45,11 @@ module Api
       private
 
       def set_project
-        @project = Project.find(params[:id])
+        project_id = params[:id]
+
+        Rails.cache.fetch("project_#{project_id}", expires_in: 1.hour) do
+          @project = Project.find(project_id)
+        end
       end
 
       def project_params

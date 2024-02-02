@@ -46,7 +46,10 @@ module Api
       private
 
       def set_task
-        @task = Task.find(params[:id])
+        task_id = params[:id]
+        Rails.cache.fetch("task_#{task_id}", expires_in: 1.hour) do
+          @task = Task.find(task_id)
+        end
       end
 
       def task_params
